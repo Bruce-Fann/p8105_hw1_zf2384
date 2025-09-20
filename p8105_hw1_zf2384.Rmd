@@ -20,18 +20,46 @@ dat_weather=early_january_weather
 ```
 
 ## General information
-```{r chunk_datainfo, include=FALSE}
+```{r chunk_datainfo, eval = FALSE}
 ncol(dat_weather)
 nrow(dat_weather)
-summary(dat_weather)
+skimr::skim(dat_weather)
 ```
 The data set includes the weather and ambient data 
 of EWR across 15 days in the first month of the year of 2013.
 
-The data set includes 15 columns and 358 rows, whith the following variables:
+The data set includes 15 columns and 358 rows, with the following variables:
 
 ```{r chunk_variables, echo = FALSE}
 names(dat_weather)
 
 ```
+And the mean temperature of this data was 39.6 degree
+
+## Temperature Plot
+
+```{r}
+library(ggplot2)
+
+temp_plot <- ggplot(data = dat_weather, 
+              aes(x = time_hour, y = temp, color = humid ) )+
+       geom_point()+
+       labs(title = " Temperature by hour ",
+         x = "Time (Jan, 2013)",
+         y = " Temperature (°F)",
+         color = "Humidity") +
+          scale_x_datetime(
+    date_breaks = "2 days",  
+    date_labels = "%d")
+temp_plot 
+```
+
+```{r, echo=FALSE}
+ggsave(
+  filename = "temp_vs_time_scatterplot.png", 
+  plot = temp_plot)
+```
+
+Temperature shows daily fluctuations, generally rising during the day and falling at night, with an overall warming trend from January 2 to 14. Humidity tends to be higher during cooler periods and decreases as temperature increases over time, indicating an inverse relationship between humidity and temperature.
+
 
