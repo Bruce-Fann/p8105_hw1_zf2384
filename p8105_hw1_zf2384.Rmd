@@ -23,6 +23,9 @@ dat_weather=early_january_weather
 ```{r chunk_datainfo, eval = FALSE}
 ncol(dat_weather)
 nrow(dat_weather)
+
+## Check important variables and value
+
 skimr::skim(dat_weather)
 ```
 The data set includes the weather and ambient data 
@@ -36,7 +39,7 @@ names(dat_weather)
 ```
 And the mean temperature of this data was 39.6 degree
 
-## Temperature Plot
+## Temperature plot
 
 ```{r}
 library(ggplot2)
@@ -44,13 +47,18 @@ library(ggplot2)
 temp_plot <- ggplot(data = dat_weather, 
               aes(x = time_hour, y = temp, color = humid ) )+
        geom_point()+
+  
+  ## name the plot and axis
        labs(title = " Temperature by hour ",
          x = "Time (Jan, 2013)",
          y = " Temperature (°F)",
          color = "Humidity") +
+  
+  ## adjust x axis labling 
           scale_x_datetime(
     date_breaks = "2 days",  
     date_labels = "%d")
+
 temp_plot 
 ```
 
@@ -61,5 +69,52 @@ ggsave(
 ```
 
 Temperature shows daily fluctuations, generally rising during the day and falling at night, with an overall warming trend from January 2 to 14. Humidity tends to be higher during cooler periods and decreases as temperature increases over time, indicating an inverse relationship between humidity and temperature.
+
+# Problem 2
+
+## Create tibble
+
+```{r, chunk_tibble}
+
+library(tidyverse)
+
+df_q2<-tibble(
+  ## random sample of size 10 from a standard Normal distribution
+    random_normal=rnorm(10),
+    
+  ## logical vector indicating whether elements of the sample are greater than 0
+    positive=random_normal>0,
+  
+  ##character vector of length 10
+    character_vec=letters[1:10],
+  
+  ##factor vector of length 10, with 3 different factor “levels”
+    factor_vec=factor(rep(c("Low", "Medium", "High"), length.out = 10))
+ )
+
+df_q2
+```
+
+## Calculate mean
+
+Try to calculate the mean of each variable. 
+The result shows:
+
+random_normal → ✅ can take mean (numeric)
+
+positive → ✅ can take mean (logical; TRUE = 1, FALSE = 0)
+
+character_vec → ❌ error (character: cannot compute mean)
+
+factor_vec → ❌ error (factor: not numeric)
+```{r, chunk_tibblemean}
+mean(pull(df_q2, random_normal))
+
+mean(pull(df_q2, positive))
+
+mean(pull(df_q2,character_vec))
+
+mean(pull(df_q2, factor_vec))
+```
 
 
