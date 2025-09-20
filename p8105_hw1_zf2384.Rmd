@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Problem 1
 
-## Loading the data set 
+_**Loading the Data set**_ 
 
 ```{r loading }
 library(moderndive)
@@ -19,7 +19,7 @@ library(moderndive)
 dat_weather=early_january_weather
 ```
 
-## General information
+_**General Information**_
 ```{r chunk_datainfo, eval = FALSE}
 ncol(dat_weather)
 nrow(dat_weather)
@@ -28,18 +28,18 @@ nrow(dat_weather)
 
 skimr::skim(dat_weather)
 ```
-The data set includes the weather and ambient data 
-of EWR across 15 days in the first month of the year of 2013.
 
-The data set includes 15 columns and 358 rows, with the following variables:
+This dataset contains weather and ambient condition records for EWR (Newark Liberty International Airport) over a 15-day period in January 2013.
+During this time, the average temperature was 39.6°F.
 
+The dataset consists of 358 observations and 15 variables, including key weather metrics such as temperature, humidity, wind direction, wind speed, and more.
+A full list of variables is provided below:
 ```{r chunk_variables, echo = FALSE}
 names(dat_weather)
 
 ```
-And the mean temperature of this data was 39.6 degree
 
-## Temperature plot
+_**Temperature Plot**_
 
 ```{r}
 library(ggplot2)
@@ -67,12 +67,13 @@ ggsave(
   filename = "temp_vs_time_scatterplot.png", 
   plot = temp_plot)
 ```
+_**Describe pattern**_
 
 Temperature shows daily fluctuations, generally rising during the day and falling at night, with an overall warming trend from January 2 to 14. Humidity tends to be higher during cooler periods and decreases as temperature increases over time, indicating an inverse relationship between humidity and temperature.
 
 # Problem 2
 
-## Create tibble
+_**Create Tibble**_
 
 ```{r, chunk_tibble}
 
@@ -85,17 +86,17 @@ df_q2<-tibble(
   ## logical vector indicating whether elements of the sample are greater than 0
     positive=random_normal>0,
   
-  ##character vector of length 10
+  ## character vector of length 10
     character_vec=letters[1:10],
   
-  ##factor vector of length 10, with 3 different factor “levels”
+  ## factor vector of length 10, with 3 different factor “levels”
     factor_vec=factor(rep(c("Low", "Medium", "High"), length.out = 10))
  )
 
 df_q2
 ```
 
-## Calculate mean
+_**Calculate Mean**_
 
 Try to calculate the mean of each variable. 
 The result shows:
@@ -107,6 +108,7 @@ positive → ✅ can take mean (logical; TRUE = 1, FALSE = 0)
 character_vec → ❌ error (character: cannot compute mean)
 
 factor_vec → ❌ error (factor: not numeric)
+
 ```{r, chunk_tibblemean}
 mean(pull(df_q2, random_normal))
 
@@ -117,4 +119,24 @@ mean(pull(df_q2,character_vec))
 mean(pull(df_q2, factor_vec))
 ```
 
+Applies function to the logical, character, and factor variables
+to explicitly convert them to numeric variables.
 
+```{r coerce_variables, results='hide'}
+
+as.numeric(df_q2$positive)
+
+as.numeric(df_q2$character_vec)
+
+as.numeric(df_q2$factor_vec)
+```
+
+_**Analysis and Explanation**_
+
+Applying as.numeric() clarifies why the mean() function behaves differently across data types.
+
+The logical vector is successfully coerced to 1s (for TRUE) and 0s (for FALSE). The mean() function performs this same coercion implicitly, which is why it can correctly calculate the proportion of TRUE values.
+
+In contrast, the character vector fails coercion because non-numeric strings like "a" cannot be converted to numbers. This results in NA values, which explains why mean() also fails on this data type.
+
+For the factor variable, as.numeric() converts it to its underlying integer codes (1, 2, 3), not its visible labels. Although these codes are numeric, they only represent categories. That is why the mean() function recognizes that averaging categorical codes is statistically invalid and returns NA as a protective measure, preventing a nonsensical calculation.
